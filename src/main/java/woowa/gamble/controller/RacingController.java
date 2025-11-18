@@ -72,7 +72,7 @@ public class RacingController {
 
         // 선택할 수 있는 자동차 목록 생성
         List<String> carList = new ArrayList<>();
-        for(int i=1; i<=carCount; i++) carList.add(i+"번마");
+        for(int i=1; i<=carCount; i++) carList.add(i+"번 자동차");
 
         model.addAttribute("user", user);
         model.addAttribute("multiplier", multiplier);
@@ -103,7 +103,7 @@ public class RacingController {
             model.addAttribute("title", multiplier == 1000 ? "??? (지옥의 레이스)" : multiplier + "배 레이스");
 
             List<String> carList = new ArrayList<>();
-            for(int i=1; i<=carCount; i++) carList.add(i+"번마");
+            for(int i=1; i<=carCount; i++) carList.add(i+"번 자동차");
             model.addAttribute("carList", carList);
 
             // 갱신된 돈 정보

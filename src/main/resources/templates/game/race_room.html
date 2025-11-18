@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <style>
+        body { background-color: #f0f0f0; font-family: sans-serif; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+
+        /* 트랙 스타일 */
+        .track-container { margin-top: 20px; max-height: 500px; overflow-y: auto; border: 2px solid #333; padding: 10px; background: #444; }
+        .lane { display: flex; align-items: center; margin-bottom: 5px; height: 30px; border-bottom: 1px dashed #777; position: relative; }
+        .car-name { width: 60px; color: white; font-weight: bold; font-size: 0.8rem; text-align: right; margin-right: 10px; }
+        .track { flex-grow: 1; position: relative; height: 100%; background: #555; border-radius: 0 5px 5px 0; }
+        .car {
+            width: 30px; height: 24px; background-color: #f1c40f; border-radius: 3px;
+            position: absolute; left: 0; top: 3px; transition: left 0.5s linear; /* 움직임 효과 */
+            display: flex; justify-content: center; align-items: center; font-size: 0.7rem; color: black;
+        }
+        .finish-line { position: absolute; right: 10px; top: 0; bottom: 0; width: 5px; background: repeating-linear-gradient(white, white 5px, black 5px, black 10px); }
+
+        /* 내 차 강조 */
+        .my-car { background-color: #e74c3c !important; color: white !important; z-index: 10; box-shadow: 0 0 5px white; }
+
+        .controls { margin-top: 20px; padding: 20px; background: #eee; border-radius: 10px; text-align: center; }
+        input, select, button { padding: 10px; font-size: 1.1rem; margin: 5px; }
+        .result-msg { font-size: 1.5rem; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 th:text="${title}"></h1>
+    <h3>현재 소지금: <span th:text="${#numbers.formatInteger(user.money, 0, 'COMMA')}"></span>원</h3>
+
+    <div class="controls" th:if="${result == null}">
+        <form action="/game/race/play" method="POST">
+            <input type="hidden" name="multiplier" th:value="${multiplier}">
+            <input type="hidden" name="carCount" th:value="${carCount}">
+
+            <label>배팅 금액:</label>
+            <input type="number" name="betAmount" min="5000" placeholder="최소 5000원" required>
+
+            <label>우승 예상 차량:</label>
+            <select name="selectedCar">
+                <option th:each="car : ${carList}" th:value="${car}" th:text="${car}"></option>
+            </select>
+
+            <button type="submit" style="background-color: #27ae60; color: white; cursor: pointer;">🏁 경기 시작</button>
+        </form>
+        <p style="color: red;" th:if="${error}" th:text="${error}"></p>
+    </div>
+
+    <div id="final-result" class="controls" style="display: none;">
+        <div id="result-text" class="result-msg"></div>
+        <a th:href="@{/game/race/{m}(m=${multiplier == 1000 ? '???' : multiplier})}" class="button">다시하기</a>
+        <a href="/game/race" class="button">다른 배율 고르기</a>
+    </div>
+
+    <div class="track-container">
+        <div class="lane" th:each="car : ${carList}">
+            <div class="car-name" th:text="${car}"></div>
+            <div class="track">
+                <div class="finish-line"></div>
+                <div class="car" th:id="'car-' + ${car}" th:text="🏎️"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /* 서버에서 받은 결과 데이터 (없으면 null) */
+    const result = [[${result}]];
+    const myCarName = [[${result?.userCarName}]]; // 내가 선택한 차 이름
+
+    if (result != null) {
+        // 내 차 표시 (빨간색으로 변경)
+        const myCarElement = document.getElementById('car-' + myCarName);
+        if (myCarElement) myCarElement.classList.add('my-car');
+
+        startAnimation(result.history, result.winners, result.isUserWin, result.reward);
+    }
+
+    function startAnimation(history, winners, isUserWin, reward) {
+        let roundIndex = 0;
+        const totalRounds = history.length;
+        const trackWidth = document.querySelector('.track').offsetWidth - 50; // 실제 이동 가능 거리 (여백 제외)
+        const stepSize = trackWidth / 10; // 10칸 기준 1칸 크기
+
+        // 0.5초마다 한 라운드씩 진행
+        const timer = setInterval(() => {
+            if (roundIndex >= totalRounds) {
+                clearInterval(timer);
+                showResult(winners, isUserWin, reward);
+                return;
+            }
+
+            const roundData = history[roundIndex]; // 이번 라운드의 모든 차 위치 정보
+
+            // 모든 차의 위치 업데이트
+            for (const [carName, position] of Object.entries(roundData)) {
+                const carEl = document.getElementById('car-' + carName);
+                if (carEl) {
+                    // position(0~10) * stepSize 만큼 왼쪽 여백(left)을 줌
+                    carEl.style.left = (position * stepSize) + 'px';
+                }
+            }
+            roundIndex++;
+        }, 500); // 500ms = 0.5초
+    }
+
+    function showResult(winners, isUserWin, reward) {
+        const resultDiv = document.getElementById('final-result');
+        const textDiv = document.getElementById('result-text');
+
+        resultDiv.style.display = 'block';
+
+        let msg = "🏆 우승: " + winners.join(", ") + "<br>";
+        if (isUserWin) {
+            msg += "<span style='color:blue'>🎉 축하합니다! " + reward.toLocaleString() + "원을 획득했습니다!</span>";
+        } else {
+            msg += "<span style='color:red'>😭 아쉽게도 패배했습니다...</span>";
+        }
+        textDiv.innerHTML = msg;
+    }
+</script>
+
+</body>
+</html>

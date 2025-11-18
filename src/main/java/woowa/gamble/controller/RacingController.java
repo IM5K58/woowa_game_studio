@@ -40,6 +40,12 @@ public class RacingController {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return "redirect:/";
 
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            session.invalidate(); // 세션 삭제 (로그아웃)
+            return "redirect:/";  // 메인으로 이동
+        }
+
         int multiplier;
         int carCount;
         String title;

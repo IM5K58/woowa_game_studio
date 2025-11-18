@@ -70,8 +70,6 @@ public class RacingController {
             }
         }
 
-        User user = userRepository.findById(userId).orElse(null);
-
         // 선택할 수 있는 자동차 목록 생성
         List<String> carList = new ArrayList<>();
         for(int i=1; i<=carCount; i++) carList.add(i+"번마");

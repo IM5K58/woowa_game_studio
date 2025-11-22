@@ -22,6 +22,9 @@ public class UserEntity {
     @Column(name = "money", nullable = false)
     private Long money;
 
+    @Column(nullable = false)
+    private boolean hiddenRewardReceived = false;
+
     public UserEntity(String userName) {
         this.userName = userName;
         this.money = 100000L;

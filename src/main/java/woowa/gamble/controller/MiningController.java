@@ -12,6 +12,7 @@ import woowa.gamble.repository.UserRepository;
 import woowa.gamble.service.MiningService;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -47,5 +48,30 @@ public class MiningController {
         Long currentMoney = miningService.mine(userId);
 
         return Collections.singletonMap("money", currentMoney);
+    }
+
+    @PostMapping("/mining/hidden-reward")
+    @ResponseBody
+    public Map<String, Object> getHiddenReward(HttpSession session) {
+        Long userId = (Long) session.getAttribute("myUserId");
+        Map<String, Object> response = new HashMap<>();
+
+        if (userId == null) {
+            response.put("success", false);
+            response.put("message", "로그인이 필요합니다.");
+            return response;
+        }
+
+        boolean success = miningService.claimHiddenReward(userId);
+
+        if (success) {
+            response.put("success", true);
+            response.put("message", "당신은 오인겸의 숨겨둔 비상금을 쌤쳐갔습니다.");
+        } else {
+            response.put("success", false);
+            response.put("message", "더는 안돼 임마");
+        }
+
+        return response;
     }
 }

@@ -22,4 +22,19 @@ public class MiningService {
 
         return user.getMoney(); // 갱신된 돈 반환
     }
+
+    @Transactional
+    public boolean claimHiddenReward(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+
+        if (user.isHiddenRewardReceived()) {
+            return false;
+        }
+
+        // 안 받았으면 100억 지급
+        user.setMoney(user.getMoney() + 10_000_000_000L);
+        user.setHiddenRewardReceived(true); // 받음 표시
+
+        return true;
+    }
 }

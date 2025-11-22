@@ -36,9 +36,21 @@
             transform: translateY(-10px); /* 위로 둥실 */
             box-shadow: 0 15px 30px rgba(0,0,0,0.4);
         }
+        #hidden-btn {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background-color: transparent; /* 투명 */
+            border: none;
+            cursor: default;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
+<div id="hidden-btn" onclick="findHiddenReward()"></div>
 <header>
     <div class="money-display" th:if="${user != null}">
         현재 소지금 : <span th:text="${#numbers.formatInteger(user.money, 3, 'COMMA')}">0</span>원
@@ -82,6 +94,22 @@
             alert("닉네임 없이는 게임을 할 수 없습니다.");
             location.reload();
         }
+    }
+    function findHiddenReward() {
+        fetch('/mining/hidden-reward', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message); // "쉿! 비상금 발견!"
+                location.reload();   // 돈 갱신을 위해 새로고침
+            } else {
+                // 이미 받은 경우 (원하면 alert를 띄워도 됨)
+                 console.log(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 </script>
 </body>

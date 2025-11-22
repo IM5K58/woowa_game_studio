@@ -34,7 +34,7 @@ public class RacingService {
         // 1. 자동차 생성
         Map<String, Integer> cars = new LinkedHashMap<>();
         for (int i = 1; i <= carCount; i++) {
-            cars.put(i + "번마", 0);
+            cars.put(i + "번 자동차", 0);
         }
 
         // 2. 경주 진행 (결과만 계산)
@@ -70,7 +70,7 @@ public class RacingService {
         }
         userRepository.save(user);
 
-        // 5. 결과 반환 (history 설정 코드 삭제됨!)
+
         RaceResultDto result = new RaceResultDto();
         result.setWinners(winners);
         result.setUserWin(isUserWin);

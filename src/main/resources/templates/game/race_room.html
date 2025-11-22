@@ -48,7 +48,7 @@
             </div>
 
             <div class="input-group">
-                <label>우승 예상 말 선택</label>
+                <label>우승 예상 자동차 선택</label>
                 <select name="selectedCar">
                     <option th:each="car : ${carList}" th:value="${car}" th:text="${car}"></option>
                 </select>
@@ -64,13 +64,13 @@
             <div class="result-title" th:text="${result.isUserWin} ? '🎉 승리! 🎉' : '😭 패배...'"></div>
 
             <div class="winner-list">
-                <strong>[ 우승마 ]</strong><br>
+                <strong>[ 우승 자동차 ]</strong><br>
                 <span th:each="winner, iterStat : ${result.winners}">
                     <span th:text="${winner}"></span><span th:if="${!iterStat.last}">, </span>
                 </span>
             </div>
 
-            <p>내가 선택한 말: <strong th:text="${result.userCarName}"></strong></p>
+            <p>내가 선택한 자동차: <strong th:text="${result.userCarName}"></strong></p>
 
             <div class="reward-text" th:if="${result.isUserWin}">
                 + <span th:text="${#numbers.formatInteger(result.reward, 0, 'COMMA')}"></span>원 획득!

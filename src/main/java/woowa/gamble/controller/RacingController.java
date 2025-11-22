@@ -49,7 +49,7 @@ public class RacingController {
         String title = "";
 
         // [수정] ??? 배율 처리 로직 강화
-        if ("???".equals(multiplierStr)) {
+        if ("hell".equals(multiplierStr)) {
             multiplier = 1000;
             carCount = 80;
             title = "??? (지옥의 레이스)";
@@ -96,7 +96,7 @@ public class RacingController {
             model.addAttribute("result", result);
 
             // 결과 화면 유지용 데이터 세팅
-            String multiplierStr = (multiplier == 1000) ? "???" : String.valueOf(multiplier);
+            String multiplierStr = (multiplier == 1000) ? "hell" : String.valueOf(multiplier);
             String title = (multiplier == 1000) ? "??? (지옥의 레이스)" : multiplier + "배 레이스";
 
             model.addAttribute("multiplier", multiplier);
@@ -114,7 +114,7 @@ public class RacingController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             // 에러 발생 시 리다이렉트 주소 처리
-            String redirectUrl = (multiplier == 1000) ? "???" : String.valueOf(multiplier);
+            String redirectUrl = (multiplier == 1000) ? "hell" : String.valueOf(multiplier);
             return "redirect:/race/" + redirectUrl;
         }
 

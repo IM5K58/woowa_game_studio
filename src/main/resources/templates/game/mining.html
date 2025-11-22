@@ -50,7 +50,7 @@
 <script>
     function mine(event) {
         //(AJAX) 사용
-        fetch('/game/mining/click', {
+        fetch('/mining/click', {
             method: 'POST'
         })
         .then(response => response.json())

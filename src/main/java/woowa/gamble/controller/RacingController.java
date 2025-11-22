@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/game/race")
+@RequestMapping("/race")
 public class RacingController {
 
     @Autowired

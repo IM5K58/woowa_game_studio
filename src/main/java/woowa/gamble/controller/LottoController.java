@@ -22,7 +22,7 @@ public class LottoController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/game/lotto")
+    @GetMapping("/lotto")
     public String lottoPage(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return "redirect:/";
@@ -33,7 +33,7 @@ public class LottoController {
     }
 
     // 2. 로또 구매 및 결과 처리
-    @PostMapping("/game/lotto/buy")
+    @PostMapping("/lotto/buy")
     public String buyLotto(@RequestParam("quantity") int quantity,
                            Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("myUserId");

@@ -38,7 +38,7 @@
     <p class="money-info">내 소지금: <span th:text="${#numbers.formatInteger(user.money, 0, 'COMMA')}"></span>원</p>
 
     <div th:if="${result == null}">
-        <form action="/game/race/play" method="POST">
+        <form action="race/play" method="POST">
             <input type="hidden" name="multiplier" th:value="${multiplier}">
             <input type="hidden" name="carCount" th:value="${carCount}">
 
@@ -81,13 +81,13 @@
         </div>
 
         <div class="action-btns">
-            <a th:href="@{/game/race/{m}(m=${multiplier == 1000 ? '???' : multiplier})}" class="btn retry-btn">한 번 더!</a>
-            <a href="/game/race" class="btn exit-btn">다른 배율 가기</a>
+            <a th:href="@{/race/{m}(m=${multiplier == 1000 ? '???' : multiplier})}" class="btn retry-btn">다시하기</a>
+            <a href="/race" class="btn exit-btn">다른 배율 가기</a>
         </div>
     </div>
 
     <div style="margin-top: 20px;" th:if="${result == null}">
-        <a href="/game/race" style="color: #999; text-decoration: none;">뒤로 가기</a>
+        <a href="/race" style="color: #999; text-decoration: none;">뒤로 가기</a>
     </div>
 </div>
 

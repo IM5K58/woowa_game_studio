@@ -22,7 +22,7 @@ public class MiningController {
     @Autowired
     private MiningService miningService;
 
-    @GetMapping("/game/mining")
+    @GetMapping("/mining")
     public String miningPage(HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return "redirect:/";
@@ -37,7 +37,7 @@ public class MiningController {
         return "game/mining";
     }
 
-    @PostMapping("/game/mining/click")
+    @PostMapping("/mining/click")
     @ResponseBody // 화면 이동 없이 데이터만 반환
     public Map<String, Long> clickMining(HttpSession session) {
         Long userId = (Long) session.getAttribute("myUserId");

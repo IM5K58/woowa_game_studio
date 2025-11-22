@@ -32,7 +32,7 @@ public class LottoController {
         return "game/lotto";
     }
 
-    // 2. 로또 구매 및 결과 처리
+    // 로또 구매 및 결과 처리
     @PostMapping("/lotto/buy")
     public String buyLotto(@RequestParam("quantity") int quantity,
                            Model model, HttpSession session) {

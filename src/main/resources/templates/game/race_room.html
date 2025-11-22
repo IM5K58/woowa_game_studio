@@ -38,7 +38,7 @@
     <p class="money-info">내 소지금: <span th:text="${#numbers.formatInteger(user.money, 0, 'COMMA')}"></span>원</p>
 
     <div th:if="${result == null}">
-        <form action="race/play" method="POST">
+        <form action="/play" method="POST">
             <input type="hidden" name="multiplier" th:value="${multiplier}">
             <input type="hidden" name="carCount" th:value="${carCount}">
 

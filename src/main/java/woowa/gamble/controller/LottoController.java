@@ -1,6 +1,6 @@
 package woowa.gamble.controller;
 
-import woowa.gamble.domain.User;
+import woowa.gamble.domain.UserEntity;
 import woowa.gamble.repository.UserRepository;
 import woowa.gamble.service.LottoService;
 import jakarta.servlet.http.HttpSession;
@@ -22,15 +22,14 @@ public class LottoController {
     @Autowired
     private UserRepository userRepository;
 
-    // 1. 로또 게임 화면 보여주기
     @GetMapping("/game/lotto")
     public String lottoPage(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("myUserId");
-        if (userId == null) return "redirect:/"; // 로그인 안했으면 쫓아냄
+        if (userId == null) return "redirect:/";
 
-        User user = userRepository.findById(userId).orElseThrow();
+        UserEntity user = userRepository.findById(userId).orElseThrow();
         model.addAttribute("user", user);
-        return "game/lotto"; // templates/game/lotto.html 파일을 보여줌
+        return "game/lotto";
     }
 
     // 2. 로또 구매 및 결과 처리
@@ -44,18 +43,15 @@ public class LottoController {
             // 서비스에게 게임 진행 시킴
             Map<String, Object> result = lottoService.playLotto(userId, quantity);
 
-            // 결과를 화면에 전달
             model.addAttribute("result", result);
             model.addAttribute("message", quantity + "장을 구매했습니다!");
         } catch (IllegalArgumentException e) {
-            // 돈이 부족하거나 에러가 나면 메시지 전달
             model.addAttribute("error", e.getMessage());
         }
 
-        // 갱신된 사용자 정보 다시 불러오기
-        User user = userRepository.findById(userId).orElseThrow();
+        UserEntity user = userRepository.findById(userId).orElseThrow();
         model.addAttribute("user", user);
 
-        return "game/lotto"; // 결과와 함께 다시 로또 페이지 표시
+        return "game/lotto";
     }
 }

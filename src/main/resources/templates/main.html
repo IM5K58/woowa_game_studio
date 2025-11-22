@@ -12,12 +12,30 @@
         p.subtitle { color: #555; font-size: 0.9rem; margin-bottom: 40px; }
         .card-container { display: flex; justify-content: center; gap: 30px; }
         .card {
-            width: 250px; height: 350px; background-color: #E6B0AA;
+            width: 250px; height: 350px;
+            background-color: #E6B0AA; /* 이미지 로딩 전 기본색 */
+            background-size: cover;    /* 이미지가 카드 꽉 차게 */
+            background-position: center; /* 이미지 중앙 정렬 */
+
             display: flex; align-items: flex-end; justify-content: center;
-            padding-bottom: 20px; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            cursor: pointer; transition: transform 0.2s; text-decoration: none; color: black; font-weight: bold;
+            padding-bottom: 20px;
+            border-radius: 15px; /* 모서리를 더 둥글게 */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* 그림자 진하게 */
+
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+
+            /* 텍스트 스타일 (이미지 위에서도 잘 보이게) */
+            color: white;
+            font-weight: bold;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* 글자 그림자 */
         }
-        .card:hover { transform: translateY(-5px); background-color: #D98880; }
+        .card:hover {
+            transform: translateY(-10px); /* 위로 둥실 */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
     </style>
 </head>
 <body>
@@ -33,8 +51,14 @@
     <p class="subtitle">도박은 불확실에 베팅하는 확실한 실패입니다.</p>
 
     <div class="card-container">
-        <a href="/game/lotto" class="card">로또 게임</a>
+        <a href="/game/lotto" class="card"
+           style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1518688248740-7502904237c7?auto=format&fit=crop&w=400&q=80');">
+            로또 게임
+        </a>
         <a href="/game/race" class="card">경주 게임</a>
+        <a href="/game/mining" class="card" style="background-color: #5D6D7E; color: white;">
+            채굴장
+        </a>
         <a href="/ranking" class="card">순위 보기</a>
     </div>
 </div>

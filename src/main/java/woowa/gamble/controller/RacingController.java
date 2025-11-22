@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import woowa.gamble.domain.User;
+import woowa.gamble.domain.UserEntity;
 import woowa.gamble.dto.RaceResultDto;
 import woowa.gamble.repository.UserRepository;
 import woowa.gamble.service.RacingService;
@@ -28,7 +28,7 @@ public class RacingController {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return "redirect:/";
 
-        User user = userRepository.findById(userId).orElse(null);
+        UserEntity user = userRepository.findById(userId).orElse(null);
         model.addAttribute("user", user);
         return "game/race_lobby";
     }
@@ -40,9 +40,9 @@ public class RacingController {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return "redirect:/";
 
-        User user = userRepository.findById(userId).orElse(null);
+        UserEntity user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            session.invalidate(); // 세션 삭제 (로그아웃)
+            session.invalidate(); // 세션 삭제
             return "redirect:/";  // 메인으로 이동
         }
 
@@ -83,7 +83,6 @@ public class RacingController {
         return "game/race_room";
     }
 
-    // 3. 게임 시작 및 결과 처리 (AJAX 대신 HTML 반환 방식으로 구현)
     @PostMapping("/play")
     public String playRace(@RequestParam int multiplier,
                            @RequestParam int carCount,
@@ -97,7 +96,6 @@ public class RacingController {
             RaceResultDto result = racingService.playRace(userId, carCount, multiplier, selectedCar, betAmount);
             model.addAttribute("result", result);
 
-            // 게임이 끝나고 다시 같은 방 정보를 보여주기 위해 필요한 정보들
             model.addAttribute("multiplier", multiplier);
             model.addAttribute("carCount", carCount);
             model.addAttribute("title", multiplier == 1000 ? "??? (지옥의 레이스)" : multiplier + "배 레이스");
@@ -106,8 +104,7 @@ public class RacingController {
             for(int i=1; i<=carCount; i++) carList.add(i+"번 자동차");
             model.addAttribute("carList", carList);
 
-            // 갱신된 돈 정보
-            User user = userRepository.findById(userId).orElse(null);
+            UserEntity user = userRepository.findById(userId).orElse(null);
             model.addAttribute("user", user);
 
         } catch (IllegalArgumentException e) {

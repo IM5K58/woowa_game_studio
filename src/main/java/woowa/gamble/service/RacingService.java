@@ -3,7 +3,7 @@ package woowa.gamble.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import woowa.gamble.domain.User;
+import woowa.gamble.domain.UserEntity;
 import woowa.gamble.dto.RaceResultDto;
 import woowa.gamble.repository.UserRepository;
 
@@ -20,7 +20,7 @@ public class RacingService {
 
     @Transactional
     public RaceResultDto playRace(Long userId, int carCount, int multiplier, String selectedCar, int betAmount) {
-        User user = userRepository.findById(userId).orElseThrow();
+        UserEntity user = userRepository.findById(userId).orElseThrow();
 
         if (betAmount < MIN_BET_AMOUNT) {
             throw new IllegalArgumentException("최소 배팅 금액은 5,000원입니다.");
@@ -31,13 +31,11 @@ public class RacingService {
 
         user.setMoney(user.getMoney() - betAmount);
 
-        // 1. 자동차 생성
         Map<String, Integer> cars = new LinkedHashMap<>();
         for (int i = 1; i <= carCount; i++) {
             cars.put(i + "번 자동차", 0);
         }
 
-        // 2. 경주 진행 (결과만 계산)
         boolean isFinished = false;
         while (!isFinished) {
             for (String name : cars.keySet()) {
@@ -49,7 +47,6 @@ public class RacingService {
             }
         }
 
-        // 3. 우승자 찾기
         List<String> winners = new ArrayList<>();
         int maxDist = 0;
         for (int pos : cars.values()) {
@@ -61,7 +58,6 @@ public class RacingService {
             }
         }
 
-        // 4. 정산
         boolean isUserWin = winners.contains(selectedCar);
         long reward = 0;
         if (isUserWin) {
@@ -69,7 +65,6 @@ public class RacingService {
             user.setMoney(user.getMoney() + reward);
         }
         userRepository.save(user);
-
 
         RaceResultDto result = new RaceResultDto();
         result.setWinners(winners);

@@ -26,14 +26,12 @@ public class Lotto {
         return numbers;
     }
 
-    // 당첨 번호와 비교해서 몇 개 맞았는지 반환
     public int matchCount(Lotto winningLotto) {
         return (int) numbers.stream()
                 .filter(winningLotto.getNumbers()::contains)
                 .count();
     }
 
-    // 보너스 번호를 포함하고 있는지 확인
     public boolean contains(int number) {
         return numbers.contains(number);
     }

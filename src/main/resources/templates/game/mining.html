@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>비트코인 채굴장</title>
+    <style>
+        body { background-color: #2c3e50; font-family: sans-serif; text-align: center; color: white; padding: 50px; }
+        .container { max-width: 600px; margin: 0 auto; }
+
+        h1 { color: #f1c40f; margin-bottom: 10px; }
+        .money-display { font-size: 1.5rem; margin-bottom: 40px; }
+
+        /* 채굴 버튼 스타일 */
+        .mining-btn {
+            background: none; border: none; font-size: 8rem; cursor: pointer;
+            transition: transform 0.1s; user-select: none; /* 드래그 방지 */
+        }
+        .mining-btn:active { transform: scale(0.9) rotate(-10deg); } /* 클릭 효과 */
+
+        .info { color: #bdc3c7; margin-top: 20px; }
+        .back-btn { display: inline-block; margin-top: 50px; color: #ecf0f1; text-decoration: none; border: 1px solid #ecf0f1; padding: 10px 20px; border-radius: 5px; }
+        .back-btn:hover { background-color: #ecf0f1; color: #2c3e50; }
+
+        /* 클릭 시 나오는 +100 효과 */
+        .floating-text {
+            position: absolute; color: #2ecc71; font-weight: bold; font-size: 1.5rem;
+            pointer-events: none; animation: floatUp 1s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⛏️ 가상화폐 채굴장 ⛏️</h1>
+    <div class="money-display">
+        내 자산: <span id="user-money" th:text="${#numbers.formatInteger(user.money, 0, 'COMMA')}">0</span>원
+    </div>
+
+    <button class="mining-btn" onclick="mine(event)">💎</button>
+
+    <p class="info">클릭할 때마다 100원을 획득합니다!</p>
+
+    <a href="/" class="back-btn">메인으로 돌아가기</a>
+</div>
+
+<script>
+    function mine(event) {
+        //(AJAX) 사용
+        fetch('/game/mining/click', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            //화면 숫자 갱신
+            document.getElementById('user-money').innerText = data.money.toLocaleString();
+
+            // +100원 효과
+            showFloatingText(event.clientX, event.clientY);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function showFloatingText(x, y) {
+        const el = document.createElement('div');
+        el.classList.add('floating-text');
+        el.innerText = '+100';
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        document.body.appendChild(el);
+
+        setTimeout(() => {
+            el.remove();
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

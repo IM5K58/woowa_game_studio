@@ -9,22 +9,21 @@ import lombok.Setter;
 @Table(name = "users")
 @Getter @Setter
 @NoArgsConstructor
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
-    // 사이트를 벗어나면 새 유저가 되므로 닉네임 중복 허용 (unique 제거)
     @Column(name = "user_name", nullable = false)
     private String userName;
 
     @Column(name = "money", nullable = false)
     private Long money;
 
-    public User(String userName) {
+    public UserEntity(String userName) {
         this.userName = userName;
-        this.money = 100000L; // 초기 자금 10만원
+        this.money = 100000L;
     }
 }

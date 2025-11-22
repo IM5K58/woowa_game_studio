@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import woowa.gamble.domain.User;
+import woowa.gamble.domain.UserEntity;
 import woowa.gamble.repository.UserRepository;
 
 import java.util.List;
@@ -17,12 +17,8 @@ public class RankingController {
 
     @GetMapping("/ranking")
     public String rankingPage(Model model) {
-        // 1. DB에서 돈 많은 순서대로 20명을 가져오기
-        List<User> topUsers = userRepository.findTop20ByOrderByMoneyDesc();
-
-        // 2. "topUsers"라는 이름으로 명단을 포장해서 화면에 보내기
+        List<UserEntity> topUsers = userRepository.findTop20ByOrderByMoneyDesc();
         model.addAttribute("topUsers", topUsers);
-
         return "ranking"; // templates/ranking.html 을 보여줌
     }
 }

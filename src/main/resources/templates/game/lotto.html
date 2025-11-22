@@ -20,7 +20,8 @@
         th { background-color: #f9f9f9; }
         .win { background-color: #fff3cd; font-weight: bold; color: #856404; }
 
-        .back-btn { display: inline-block; margin-top: 20px; text-decoration: none; color: #555; }
+        .back-btn { display: inline-block; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .back-btn:hover { background-color: #2980b9; }
     </style>
 </head>
 <body>
@@ -44,7 +45,7 @@
         <h2>🎉 추첨 결과 🎉</h2>
 
         <div class="winning-numbers">
-            <p>이번 주 당첨 번호</p>
+            <p>이번 회차 당첨 번호</p>
             <span th:each="num : ${result.winningLotto.numbers}" th:text="${num}"></span>
             <span>+</span>
             <span class="bonus-number" th:text="${result.bonusNumber}"></span>
@@ -69,7 +70,7 @@
             </tr>
             <tr th:classappend="${result.stats.get(T(woowa.gamble.domain.WinningRank).SECOND) > 0} ? 'win'">
                 <td>2등</td>
-                <td>5개 + 보너스</td>
+                <td>5개 + 보너스 번호 일치</td>
                 <td>3,000만 원</td>
                 <td th:text="${result.stats.getOrDefault(T(woowa.gamble.domain.WinningRank).SECOND, 0)} + '회'"></td>
             </tr>

@@ -75,6 +75,34 @@ public class RacingController {
 
         return "game/race_room";
     }
+    
+    //엄~~청 긴 숫자 입력 시
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public String handleTypeMismatchException(MethodArgumentTypeMismatchException e,
+                                              HttpServletRequest request,
+                                              HttpSession session,
+                                              Model model) {
+        UserEntity user = getUser(session);
+        if (user == null) return "redirect:/";
+        
+        if ("betAmount".equals(e.getName())) {
+            try {
+                String multiplierStr = request.getParameter("multiplier");
+                int multiplier = Integer.parseInt(multiplierStr);
+
+                RaceMode mode = RaceMode.fromMultiplier(multiplier);
+                
+                setupRaceRoomModel(model, user, mode);
+                model.addAttribute("error", "입력 금액이 너무 크거나 잘못된 형식입니다.");
+
+                return "game/race_room";
+            } catch (Exception ex) {
+                return "redirect:/race";
+            }
+        }
+
+        return "redirect:/";
+    }
 
     private void setupRaceRoomModel(Model model, UserEntity user, RaceMode mode) {
         List<String> carList = new ArrayList<>();

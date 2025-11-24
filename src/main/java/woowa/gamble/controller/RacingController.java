@@ -3,10 +3,13 @@
 package woowa.gamble.controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import woowa.gamble.domain.UserEntity;
 import woowa.gamble.dto.RaceResultDto;
 import woowa.gamble.repository.UserRepository;
@@ -113,5 +116,33 @@ public class RacingController {
         model.addAttribute("title", title);
         model.addAttribute("carList", carList);
         model.addAttribute("multiplierStr", multiplierStr);
+    }
+
+    //엄~청 긴 숫자 입력됐을 때 처리
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public String handleTypeMismatchException(MethodArgumentTypeMismatchException e, HttpSession session, Model model, HttpServletRequest request) { // <-- HttpServletRequest 추가
+        Long userId = (Long) session.getAttribute("myUserId");
+        if (userId == null) {
+            session.invalidate();
+            return "redirect:/";
+        }
+        
+        if ("betAmount".equals(e.getName())) {
+
+            String multiplierStr = request.getParameter("multiplier");
+            if (multiplierStr == null) {
+                multiplierStr = "2";
+            }
+            model.addAttribute("error", "입력 금액이 너무 크거나 잘못된 형식입니다.");
+            try {
+                loadRaceRoomAttributes(userId, multiplierStr, model);
+            } catch (Exception ex) {
+                session.invalidate();
+                return "redirect:/";
+            }
+            return "game/race_room";
+        }
+
+        return null;
     }
 }

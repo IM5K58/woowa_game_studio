@@ -61,7 +61,7 @@
 
     <div th:if="${result != null}">
         <div class="result-card" th:classappend="${result.isUserWin} ? 'win' : 'lose'">
-            <div class="result-title" th:text="${result.isUserWin} ? '🎉 승리! 🎉' : '😭 패배...'"></div>
+            <div class="result-title" th:text="${result.isUserWin} ? '🎉 나이스! 🎉' : '😭 실패...'"></div>
 
             <div class="winner-list">
                 <strong>[ 우승 자동차 ]</strong><br>

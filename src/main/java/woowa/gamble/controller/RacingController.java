@@ -1,3 +1,5 @@
+// woowa.gamble.controller.RacingController.java (수정 제안)
+
 package woowa.gamble.controller;
 
 import jakarta.servlet.http.HttpSession;
@@ -33,52 +35,14 @@ public class RacingController {
     }
 
     @GetMapping("/{multiplier}")
-    public String raceRoom(@PathVariable("multiplier") String multiplierStr,
-                           HttpSession session, Model model) {
+    public String raceRoom(@PathVariable("multiplier") String multiplierStr, HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return "redirect:/";
-
-        UserEntity user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            session.invalidate();
-            return "redirect:/";
+        try {
+            loadRaceRoomAttributes(userId, multiplierStr, model);
+        } catch (IllegalArgumentException e) {
+            return "redirect:/race";
         }
-
-        int multiplier = 0;
-        int carCount = 0;
-        String title = "";
-
-        // [수정] ??? 배율 처리 로직 강화
-        if ("hell".equals(multiplierStr)) {
-            multiplier = 1000;
-            carCount = 80;
-            title = "??? (지옥의 레이스)";
-        } else {
-            try {
-                multiplier = Integer.parseInt(multiplierStr);
-                if (multiplier == 2) carCount = 2;
-                else if (multiplier == 4) carCount = 4;
-                else if (multiplier == 8) carCount = 10;
-                else if (multiplier == 16) carCount = 20;
-                else return "redirect:/race";
-                title = multiplier + "배 레이스";
-            } catch (NumberFormatException e) {
-                return "redirect:/race";
-            }
-        }
-
-        List<String> carList = new ArrayList<>();
-        for(int i=1; i<=carCount; i++) carList.add(i+"번 자동차");
-
-        model.addAttribute("user", user);
-        model.addAttribute("multiplier", multiplier); // 여기에는 숫자(1000)가 들어감
-        model.addAttribute("carCount", carCount);
-        model.addAttribute("title", title);
-        model.addAttribute("carList", carList);
-
-        // HTML에서 링크 생성할 때 쓰기 위해 원래 문자열도 넘겨줌
-        model.addAttribute("multiplierStr", multiplierStr);
-
         return "game/race_room";
     }
 
@@ -92,32 +56,62 @@ public class RacingController {
         if (userId == null) return "redirect:/";
 
         try {
+            String multiplierStr = (multiplier == 1000) ? "hell" : String.valueOf(multiplier);
+            loadRaceRoomAttributes(userId, multiplierStr, model);
+
             RaceResultDto result = racingService.playRace(userId, carCount, multiplier, selectedCar, betAmount);
             model.addAttribute("result", result);
 
-            // 결과 화면 유지용 데이터 세팅
-            String multiplierStr = (multiplier == 1000) ? "hell" : String.valueOf(multiplier);
-            String title = (multiplier == 1000) ? "??? (지옥의 레이스)" : multiplier + "배 레이스";
-
-            model.addAttribute("multiplier", multiplier);
-            model.addAttribute("multiplierStr", multiplierStr); // 중요!
-            model.addAttribute("carCount", carCount);
-            model.addAttribute("title", title);
-
-            List<String> carList = new ArrayList<>();
-            for(int i=1; i<=carCount; i++) carList.add(i+"번 자동차");
-            model.addAttribute("carList", carList);
-
-            UserEntity user = userRepository.findById(userId).orElse(null);
-            model.addAttribute("user", user);
+            UserEntity updatedUser = userRepository.findById(userId).orElse(null);
+            model.addAttribute("user", updatedUser); // 갱신된 소지금 반영
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            // 에러 발생 시 리다이렉트 주소 처리
-            String redirectUrl = (multiplier == 1000) ? "hell" : String.valueOf(multiplier);
-            return "redirect:/race/" + redirectUrl;
+
+        } catch (Exception e) {
+            session.invalidate();
+            return "redirect:/";
         }
 
         return "game/race_room";
+    }
+
+    private void loadRaceRoomAttributes(Long userId, String multiplierStr, Model model) {
+        UserEntity user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        int multiplier;
+        int carCount;
+        String title;
+
+        if ("hell".equals(multiplierStr)) {
+            multiplier = 1000;
+            carCount = 80;
+            title = "??? (지옥의 레이스)";
+        } else {
+            try {
+                multiplier = Integer.parseInt(multiplierStr);
+                if (multiplier == 2) carCount = 2;
+                else if (multiplier == 4) carCount = 4;
+                else if (multiplier == 8) carCount = 10;
+                else if (multiplier == 16) carCount = 20;
+                else throw new IllegalArgumentException("잘못된 배율입니다.");
+                title = multiplier + "배 레이스";
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("잘못된 배율 형식입니다.");
+            }
+        }
+
+        List<String> carList = new ArrayList<>();
+        for(int i=1; i<=carCount; i++) carList.add(i+"번 자동차");
+
+        model.addAttribute("user", user);
+        model.addAttribute("multiplier", multiplier);
+        model.addAttribute("carCount", carCount);
+        model.addAttribute("title", title);
+        model.addAttribute("carList", carList);
+        model.addAttribute("multiplierStr", multiplierStr);
     }
 }

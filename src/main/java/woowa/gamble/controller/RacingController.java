@@ -10,7 +10,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import woowa.gamble.domain.RaceMode;
 import woowa.gamble.domain.UserEntity;
 import woowa.gamble.dto.RaceResultDto;
-import woowa.gamble.dto.UserDto; // DTO 사용
+import woowa.gamble.dto.UserDto;
 import woowa.gamble.repository.UserRepository;
 import woowa.gamble.service.RacingService;
 
@@ -25,7 +25,7 @@ public class RacingController {
     private RacingService racingService;
     @Autowired
     private UserRepository userRepository;
-    
+
     @GetMapping("")
     public String lobby(HttpSession session, Model model) {
         UserEntity user = getUser(session);

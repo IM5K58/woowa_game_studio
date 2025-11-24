@@ -1,6 +1,7 @@
 package woowa.gamble.controller;
 
 import woowa.gamble.domain.UserEntity;
+import woowa.gamble.dto.LottoResultDto;
 import woowa.gamble.repository.UserRepository;
 import woowa.gamble.service.LottoService;
 import jakarta.servlet.http.HttpSession;
@@ -41,10 +42,10 @@ public class LottoController {
 
         try {
             // 서비스에게 게임 진행 시킴
-            Map<String, Object> result = lottoService.playLotto(userId, quantity);
-
+            LottoResultDto result = lottoService.playLotto(userId, quantity);
             model.addAttribute("result", result);
             model.addAttribute("message", quantity + "장을 구매했습니다!");
+
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
         }

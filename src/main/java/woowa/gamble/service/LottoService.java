@@ -4,6 +4,7 @@ import woowa.gamble.domain.Lotto;
 import woowa.gamble.domain.UserEntity;
 import woowa.gamble.domain.WinningRank;
 import woowa.gamble.repository.UserRepository;
+import woowa.gamble.dto.LottoResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class LottoService {
     private final String LESS_MONEY = "돈이 부족합니다!";
 
     @Transactional
-    public Map<String, Object> playLotto(Long userId, int quantity) {
+    public LottoResultDto playLotto(Long userId, int quantity) {
         UserEntity user = userRepository.findById(userId).orElseThrow();
 
         long totalCost = (long) quantity * TICKET_PRICE;
@@ -51,21 +52,17 @@ public class LottoService {
             resultStats.put(rank, resultStats.getOrDefault(rank, 0) + 1);
             totalPrize += rank.getPrize();
         }
-
-        // 6. 당첨금 지급
         user.setMoney(user.getMoney() + totalPrize);
         userRepository.save(user); // 변경된 돈 저장
 
-        // 7. 결과를 모아서 컨트롤러로 반환
-        Map<String, Object> result = new HashMap<>();
-        result.put("userLottos", userLottos); // 사용자가 산 로또들
-        result.put("winningLotto", winningLotto); // 당첨 번호
-        result.put("bonusNumber", bonusNumber); // 보너스 번호
-        result.put("stats", resultStats); // 등수별 당첨 횟수
-        result.put("totalPrize", totalPrize); // 총 당첨금
-        result.put("earningRate", (double) totalPrize / totalCost * 100); // 수익률
-
-        return result;
+        return LottoResultDto.builder()
+                .userLottos(userLottos)
+                .winningLotto(winningLotto)
+                .bonusNumber(bonusNumber)
+                .stats(resultStats)
+                .totalPrize(totalPrize)
+                .earningRate((double) totalPrize / totalCost * 100)
+                .build();
     }
 
     // 1~45 사이 랜덤 로또 번호 생성기

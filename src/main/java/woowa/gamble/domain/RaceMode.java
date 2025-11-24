@@ -11,10 +11,10 @@ public enum RaceMode {
     X16("16", 16, 20, "16배 레이스"),
     HELL("hell", 1000, 80, "??? (지옥의 레이스)");
 
-    private final String urlPath;   // URL 경로로 들어오는 값 (예: "2", "hell")
-    private final int multiplier;   // 실제 배율
-    private final int carCount;     // 자동차 수
-    private final String title;     // 화면에 보여줄 제목
+    private final String urlPath;
+    private final int multiplier;
+    private final int carCount;
+    private final String title;
 
     RaceMode(String urlPath, int multiplier, int carCount, String title) {
         this.urlPath = urlPath;
@@ -23,7 +23,6 @@ public enum RaceMode {
         this.title = title;
     }
 
-    // URL 경로 값으로 적절한 모드를 찾아주는 메서드
     public static RaceMode from(String path) {
         return Arrays.stream(values())
                 .filter(mode -> mode.urlPath.equals(path))
@@ -31,7 +30,6 @@ public enum RaceMode {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게임 모드입니다."));
     }
 
-    // 배율 정수값으로 모드 찾기 (Play 요청 처리용)
     public static RaceMode fromMultiplier(int multiplier) {
         return Arrays.stream(values())
                 .filter(mode -> mode.multiplier == multiplier)

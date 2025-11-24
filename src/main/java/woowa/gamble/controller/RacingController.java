@@ -126,7 +126,7 @@ public class RacingController {
             session.invalidate();
             return "redirect:/";
         }
-        
+
         if ("betAmount".equals(e.getName())) {
 
             String multiplierStr = request.getParameter("multiplier");

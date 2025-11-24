@@ -43,7 +43,6 @@ public class MiningController {
     public Map<String, Long> clickMining(HttpSession session) {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return null;
-
         // 100원 추가하고 현재 잔액 받기
         Long currentMoney = miningService.mine(userId);
 

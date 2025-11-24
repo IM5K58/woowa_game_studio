@@ -50,7 +50,7 @@ public class RacingController {
     public String playRace(@RequestParam int multiplier,
                            @RequestParam int carCount,
                            @RequestParam String selectedCar,
-                           @RequestParam int betAmount,
+                           @RequestParam Long betAmount,
                            Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("myUserId");
         if (userId == null) return "redirect:/";

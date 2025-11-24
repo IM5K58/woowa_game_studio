@@ -16,10 +16,10 @@ public class RacingService {
     private UserRepository userRepository;
 
     private static final int FINISH_LINE = 10;
-    private static final int MIN_BET_AMOUNT = 5000;
+    private static final Long MIN_BET_AMOUNT = 5000L;
 
     @Transactional
-    public RaceResultDto playRace(Long userId, int carCount, int multiplier, String selectedCar, int betAmount) {
+    public RaceResultDto playRace(Long userId, int carCount, int multiplier, String selectedCar, Long betAmount) {
         UserEntity user = userRepository.findById(userId).orElseThrow();
 
         if (betAmount < MIN_BET_AMOUNT) {
@@ -61,7 +61,7 @@ public class RacingService {
         boolean isUserWin = winners.contains(selectedCar);
         long reward = 0;
         if (isUserWin) {
-            reward = (long) betAmount * multiplier;
+            reward = betAmount * multiplier;
             user.setMoney(user.getMoney() + reward);
         }
         userRepository.save(user);
